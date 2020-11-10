@@ -1,1 +1,1 @@
-sans_proc: python3 sans.py
+web: python3 sans.py
