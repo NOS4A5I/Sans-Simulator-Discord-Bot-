@@ -2,7 +2,7 @@
 # realpython.com/how-to-make-a-discord-bot-python/
 
 from flask import Flask
-from threading import Threading
+from threading import Thread
 
 import os
 import ffmpeg
