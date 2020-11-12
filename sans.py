@@ -1,12 +1,31 @@
 # The first 30ish lines are based on
 # realpython.com/how-to-make-a-discord-bot-python/
 
+from flask import Flask
+from threading import Threading
+
 import os
 import ffmpeg
 import discord
 import asyncio
 from dotenv import load_dotenv
 
+# keeping the server up
+app = Flask('')
+
+@app.route('/')
+def route_return():
+	return 'Alive.'
+	
+def run_app():
+    hport = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=hport)
+    
+def keep_alive():
+    server = Thread(target=run_app)
+    server.start()
+
+# discord code	
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 
@@ -141,6 +160,5 @@ async def sans_say(what, the_channel):
 		await asyncio.sleep(speak_time + 1)
 		eh.stop()
 		
-
-
+run_app()
 sans.run(TOKEN)

@@ -1,3 +1,4 @@
+flask
 pynacl
 python-dotenv
 ffmpeg
