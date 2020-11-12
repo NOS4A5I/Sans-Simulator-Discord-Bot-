@@ -1,1 +1,1 @@
-web: python sans.py
+worker: python3 sans.py

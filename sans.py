@@ -17,7 +17,7 @@ sans = discord.Client()
 async def on_ready():
     print(f'{sans.user} has successfully connected to Discord.')
     
-    print('\nMember of the following:')
+    print('\nMember of the following as of ready:')
     print(f'GUILD \t\t\t\t ID ')
     print('-----------------------------------------------------------------')
     
@@ -39,6 +39,18 @@ async def on_message(message):
 	if message.content == 'sans leave':
 		await sans_leave_vc(message)
 		
+	if message.content[0:9] == 'sans tts ':
+		await sans_tts(message)
+		
+	if message.content == 'sans help':
+		await sans_display_help(message)
+
+async def sans_display_help(message):
+	await message.channel.send('```Commands:\n' +
+						 	   'join      : join the same voice channel as user\n' +
+						 	   'leave     : leave the voice channel the user is in\n' +
+						 	   'tts <msg> : repeat text in current voice channel of user\n' +
+						 	   'help      : display this help message```')
 # sans join command
 async def sans_join_vc(message):
 
@@ -48,7 +60,7 @@ async def sans_join_vc(message):
 		await message.channel.send(f'connected to {message.author.voice.channel} by {message.author.mention}.')
 		
 		# successful join! Let sans introduce himself
-		await sans_say('hello aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa                   a',message.author.voice.channel)
+		await sans_say('hello',message.author.voice.channel)
 
 	# voice channel join fail
 	else:
@@ -80,6 +92,26 @@ async def sans_leave_vc(message):
 	else:
 		await message.channel.send(f'i\'m not in a voice channel here at all {message.author.mention}...')
 
+async def sans_tts(message):
+
+	user_channel = message.author.voice.channel
+	
+	# check for channel match
+	voice_client_to_use = False
+	
+	for client in sans.voice_clients:
+		if client.channel == user_channel:
+			voice_client_to_use = client
+
+	if voice_client_to_use:
+		await sans_say(message.content.strip('sans tts '), user_channel)
+		
+	else:
+		await message.channel.send('you must be in the same voice channel as me to use this command.')
+		
+			
+	
+
 async def sans_say(what, the_channel):
 
 	# check for channel match
@@ -93,17 +125,22 @@ async def sans_say(what, the_channel):
 
 		eh = voice_client_to_use
 
-		for a_character in what:
-			# play "eh" for a nonspace character in message
-			if a_character != ' ':
-				eh.play(discord.FFmpegPCMAudio('vc.mp3'))
-				while eh.is_playing():
-					1 == 1
-			# pause for a space
-			else:
-				await asyncio.sleep(0.3)
+		# a generic speaking-time length
+		speak_time = len(what) * 60 * 0.1 / 160
 
-def sans_say_global_message():
-	print("Not implemented.")
+		# recording is only 122 seconds long;
+		# for anything longer, loop through the recording until done
+		while speak_time > 122:
+			eh.play(discord.FFmpegPCMAudio('vc.mp3'))
+			# one second of leeway
+			await asyncio.sleep(123)
+			speak_time -= 122;
+
+		# one second of leeway
+		eh.play(discord.FFmpegPCMAudio('vc.mp3'))
+		await asyncio.sleep(speak_time + 1)
+		eh.stop()
+		
+
 
 sans.run(TOKEN)
