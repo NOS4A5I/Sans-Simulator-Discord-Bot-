@@ -160,5 +160,5 @@ async def sans_say(what, the_channel):
 		await asyncio.sleep(speak_time + 1)
 		eh.stop()
 		
-run_app()
+keep_alive()
 sans.run(TOKEN)
