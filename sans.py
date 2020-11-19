@@ -76,7 +76,7 @@ async def sans_join_vc(message):
 	# user is in voice channel -- join them
 	if message.author.voice:
 		await message.author.voice.channel.connect()
-		await message.channel.send(f'connected to {message.author.voice.channel} by {message.author.mention}.')
+		await message.channel.send(f'connected to `{message.author.voice.channel}` by {message.author.mention}.')
 		
 		# successful join! Let sans introduce himself
 		await sans_say('hello',message.author.voice.channel)
@@ -148,13 +148,14 @@ async def sans_say(what, the_channel):
 		# for every 5 characters speak 1 second
 		speak_time = len(what) / 5
 
-		# recording is only 122 seconds long;
-		# for anything longer, loop through the recording until done
-		while speak_time > 122:
+		# workaround heroku error R12 (30 second timeout):
+		# play through vc.mp3 in 20 second increments
+		while speak_time > 20:
 			eh.play(discord.FFmpegPCMAudio('vc.mp3'))
 			# one second of leeway
-			await asyncio.sleep(123)
-			speak_time -= 122;
+			await asyncio.sleep(21)
+			eh.stop()
+			speak_time -= 20;
 
 		# one second of leeway
 		eh.play(discord.FFmpegPCMAudio('vc.mp3'))
