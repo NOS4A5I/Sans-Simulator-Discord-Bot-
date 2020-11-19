@@ -144,8 +144,9 @@ async def sans_say(what, the_channel):
 
 		eh = voice_client_to_use
 
-		# a generic speaking-time length
-		speak_time = len(what) * 60 * 0.1 / 160
+		# a generic speaking-time length --
+		# for every 5 characters speak 1 second
+		speak_time = len(what) / 5
 
 		# recording is only 122 seconds long;
 		# for anything longer, loop through the recording until done
